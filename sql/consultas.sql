@@ -2,6 +2,10 @@ SELECT dog_name, dog_status FROM dogs WHERE dog_id = 4;
 
 SELECT * FROM customers_dogs;
 
+UPDATE customers_dogs 
+SET adopted_at = CURRENT_TIMESTAMP 
+WHERE id_cust = 1 AND id_dog = 4;
+
 SELECT dog_name, dog_status FROM dogs WHERE dog_id = 4;
 SELECT * FROM customers_dogs;
     

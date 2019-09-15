@@ -83,7 +83,3 @@ BEGIN
 END//
 
 DELIMITER ;
-
-UPDATE customers_dogs 
-SET adopted_at = CURRENT_TIMESTAMP 
-WHERE id_cust = 1 AND id_dog = 4;
