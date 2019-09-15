@@ -1,6 +1,6 @@
 DROP DATABASE IF EXISTS manada_adopciones;
 
-CREATE DATABASE IF NOT EXISTS manada_adopciones;
+CREATE DATABASE IF NOT EXISTS manada_adopciones CHARACTER SET UTF8MB4;
 
 USE manada_adopciones;
 
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS dogs (
     dog_status INT DEFAULT 1,
     dog_photo VARCHAR(100) NOT NULL,
     dog_created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CHECK(dog_status = 0 OR dog_status = 1),
+    CHECK(dog_status BETWEEN 0 AND 2),
     CONSTRAINT fk_dog_gender FOREIGN KEY (dog_gender) REFERENCES genders(gender_id),
     CONSTRAINT fk_dog_size FOREIGN KEY (dog_size) REFERENCES sizes(size_id),
     CONSTRAINT fk_dog_breed FOREIGN KEY (dog_breed) REFERENCES breeds(breed_id)
@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS customers (
 CREATE TABLE IF NOT EXISTS customers_dogs (
 	id_cust INT,
     id_dog INT NOT NULL,
-    adopted_at TIMESTAMP,
+    adopted_at DATETIME,
     CONSTRAINT fk_id_cust FOREIGN KEY (id_cust) REFERENCES customers(cust_id)
     ON DELETE SET NULL,
     CONSTRAINT fk_id_dog FOREIGN KEY (id_dog) REFERENCES dogs(dog_id) 
@@ -231,6 +231,29 @@ INSERT INTO admins (admin_email, admin_password, admin_firstname, admin_lastname
         1
 	)
 ;
+
+DELIMITER //
+
+CREATE TRIGGER adopted
+AFTER UPDATE ON customers_dogs
+FOR EACH ROW
+BEGIN
+	UPDATE dogs 
+	SET dog_status = 2 
+	WHERE dog_id = OLD.id_dog;
+END//
+
+DELIMITER ;
+
+SELECT dog_name, dog_status FROM dogs WHERE dog_id = 4;
+SELECT * FROM customers_dogs;
+
+UPDATE customers_dogs 
+SET adopted_at = CURRENT_TIMESTAMP 
+WHERE id_cust = 1 AND id_dog = 4;
+
+SELECT dog_name, dog_status FROM dogs WHERE dog_id = 4;
+SELECT * FROM customers_dogs;
     
 SELECT * FROM breeds;
 
