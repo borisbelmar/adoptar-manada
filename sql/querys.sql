@@ -1,13 +1,13 @@
 SELECT dog_name, dog_status FROM dogs WHERE dog_id = 4;
 
-SELECT * FROM customers_dogs;
+SELECT * FROM adoptions;
 
-UPDATE customers_dogs 
+UPDATE adoptions
 SET adopted_at = CURRENT_TIMESTAMP 
-WHERE id_cust = 1 AND id_dog = 4;
+WHERE id_user = 1 AND id_dog = 4;
 
 SELECT dog_name, dog_status FROM dogs WHERE dog_id = 4;
-SELECT * FROM customers_dogs;
+SELECT * FROM adoptions;
     
 SELECT * FROM breeds;
 
