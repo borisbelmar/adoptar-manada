@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS dogs (
 	dog_breed INT NOT NULL,
 	dog_recomendations TEXT,
 	dog_status TINYINT DEFAULT 1,
-	dog_photo VARCHAR(100) NOT NULL,
+	dog_photo VARCHAR(100),
 	dog_created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	CHECK(dog_half_breed = 0 OR dog_half_breed = 1),
 	CHECK(dog_status BETWEEN 0 AND 4),
@@ -136,7 +136,7 @@ BEGIN
 	END IF;
 END//
 
-CREATE PROCEDURE add_update_user
+CREATE PROCEDURE save
 (
   IN _email VARCHAR(50),
   IN _firstname VARCHAR(50),
