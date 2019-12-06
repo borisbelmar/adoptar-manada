@@ -83,4 +83,4 @@ INSERT INTO users (user_email, user_firstname, user_lastname, user_rut, user_gen
 		"+56940458105"
 	);
 
-INSERT INTO adoptions (id_user, id_dog) VALUES (1, 4);
+INSERT INTO adoptions (adoption_user, adoption_dog) VALUES (1, 4);

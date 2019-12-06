@@ -90,15 +90,16 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 CREATE TABLE IF NOT EXISTS adoptions (
-	id_user INT,
-	id_dog INT NOT NULL,
-	notes VARCHAR(200),
-	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	adopted_at DATETIME,
-	PRIMARY KEY (id_user, id_dog),
-	CONSTRAINT fk_id_user FOREIGN KEY (id_user) REFERENCES users(user_id)
-	ON DELETE CASCADE,
-	CONSTRAINT fk_id_dog FOREIGN KEY (id_dog) REFERENCES dogs(dog_id) 
+	adoption_id INT PRIMARY KEY AUTO_INCREMENT,
+	adoption_user INT,
+	adoption_dog INT NOT NULL,
+	adoption_notes VARCHAR(200),
+	adoption_created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	adoption_adopted_at DATETIME,
+	CONSTRAINT uk_adoption UNIQUE KEY (adoption_user, adoption_dog),
+	CONSTRAINT fk_adoption_user FOREIGN KEY (adoption_user) REFERENCES users(user_id)
+	ON DELETE SET NULL,
+	CONSTRAINT fk_adoption_dog FOREIGN KEY (adoption_dog) REFERENCES dogs(dog_id) 
 	ON DELETE CASCADE
 );
 
@@ -124,16 +125,25 @@ CREATE TRIGGER adopted
 AFTER UPDATE ON adoptions
 FOR EACH ROW
 BEGIN
-	IF (NEW.adopted_at IS NOT NULL)
+	IF (NEW.adoption_adopted_at IS NOT NULL)
 	THEN 
 		UPDATE dogs 
 		SET dog_status = 3 
-		WHERE dog_id = OLD.id_dog;
+		WHERE dog_id = OLD.adoption_dog;
 	ELSE
 		UPDATE dogs 
 		SET dog_status = 2
-		WHERE dog_id = OLD.id_dog;
+		WHERE dog_id = OLD.adoption_dog;
 	END IF;
+END//
+
+CREATE TRIGGER start_process
+AFTER INSERT ON adoptions
+FOR EACH ROW
+BEGIN
+	UPDATE dogs 
+	SET dog_status = 2
+	WHERE dog_id = NEW.adoption_dog;
 END//
 
 CREATE PROCEDURE save

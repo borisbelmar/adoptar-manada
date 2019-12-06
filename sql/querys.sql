@@ -85,3 +85,86 @@ DELETE FROM users WHERE user_id = 4;
 
 /*** Adoptions ***/
 
+-- findAll() return array | Trae todos los procesos de adopción
+
+SELECT adoption_id, adoption_dog, adoption_user, adoption_notes, adoption_created_at, adoption_adopted_at
+FROM adoptions
+ORDER BY adoption_created_at ASC;
+
+-- findById(1) return row | Trae el proceso de adopción con id 1
+
+SELECT adoption_id, adoption_dog, adoption_user, adoption_notes, adoption_created_at, adoption_adopted_at
+FROM adoptions
+WHERE adoption_id = 1;
+
+-- findByDog(2) return array | Trae todos los proceso ligados al perro 2
+
+SELECT adoption_id, adoption_dog, adoption_user, adoption_notes, adoption_created_at, adoption_adopted_at
+FROM adoptions
+WHERE adoption_dog = 2;
+
+-- findByStatus(2) | Trae solo los procesos en curso, es decir, no adoptados o deshabilitados
+
+SELECT a.adoption_id, a.adoption_dog, a.adoption_user, a.adoption_notes, a.adoption_created_at, a.adoption_adopted_at, d.dog_status
+FROM adoptions a
+LEFT JOIN dogs d ON a.adoption_dog = d.dog_id
+WHERE d.dog_status = 3;
+
+-- findByUser(1) return array | Trae todos los proceso ligados al usuario 1
+
+SELECT adoption_id, adoption_dog, adoption_user, adoption_notes, adoption_created_at, adoption_adopted_at
+FROM adoptions
+WHERE adoption_user = 1;
+
+-- create(3,2,"Me encanta este perro") return boolean | Crea un proceso de adopción entre el usuario id 2 y el perro id 3
+
+INSERT INTO adoptions (adoption_dog, adoption_user, adoption_notes) VALUES (3, 2, 'Me encanta este perro');
+
+-- completeAdoption(1) return boolean | Completa el proceso de adopción id 2
+
+UPDATE adoptions SET
+	adoption_adopted_at = CURRENT_TIMESTAMP
+WHERE adoption_id = 2;
+
+-- deleteById(1) return boolean | Elimina la adopción 1
+
+DELETE FROM adoptions WHERE adoption_id = 1;
+
+/* Data Análisis */
+
+-- Cantidad de procesos activos
+
+SELECT COUNT(a.adoption_id) FROM adoptions a 
+LEFT JOIN dogs d ON a.adoption_dog = d.dog_id 
+WHERE d.dog_status BETWEEN 1 AND 2;
+
+-- Cantidad de perros adoptados
+
+SELECT COUNT(dog_id) AS 'count' FROM dogs 
+WHERE dog_status = 3;
+
+-- Cantidad de perros activos para ser adoptados
+
+SELECT COUNT(dog_id) AS 'count' FROM dogs 
+WHERE dog_status BETWEEN 1 AND 2;
+
+-- Cantidad de perros adoptados entre una fecha y otra
+-- En este caso 2019/12/01 y 2019/12/30
+
+SELECT COUNT(d.dog_id) AS 'count' FROM dogs d
+LEFT JOIN adoptions a ON d.dog_id = a.adoption_dog 
+WHERE a.adoption_adopted_at BETWEEN '2019-12-01' AND '2019-12-30';
+
+-- Cantidad de perros adoptados los últimos 30 días
+
+SELECT COUNT(d.dog_id) AS 'count' FROM dogs d
+LEFT JOIN adoptions a ON d.dog_id = a.adoption_dog 
+WHERE a.adoption_adopted_at BETWEEN NOW() - INTERVAL 30 DAY AND NOW();
+
+-- Último perro adoptado
+
+SELECT d.dog_id, d.dog_name, a.adoption_id, a.adoption_adopted_at FROM dogs d
+LEFT JOIN adoptions a ON d.dog_id = a.adoption_dog
+WHERE a.adoption_adopted_at IS NOT NULL
+ORDER BY a.adoption_adopted_at DESC
+LIMIT 1;
