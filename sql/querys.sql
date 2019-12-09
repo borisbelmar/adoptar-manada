@@ -120,7 +120,7 @@ WHERE adoption_user = 1;
 
 INSERT INTO adoptions (adoption_dog, adoption_user, adoption_notes) VALUES (3, 2, 'Me encanta este perro');
 
--- completeAdoption(1) return boolean | Completa el proceso de adopción id 2
+-- closeAdoption(1) return boolean | Completa el proceso de adopción id 2
 
 UPDATE adoptions SET
 	adoption_adopted_at = CURRENT_TIMESTAMP
